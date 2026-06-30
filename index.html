@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audiobook Timer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ede8e3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 390px;
+      background: #faf8f5;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(60, 30, 15, 0.16), 0 4px 16px rgba(60, 30, 15, 0.06);
+    }
+
+    .hero {
+      height: 220px;
+      position: relative;
+      background:
+        radial-gradient(ellipse 90% 110% at 72% 10%, rgba(210, 90, 60, 0.82) 0%, transparent 52%),
+        radial-gradient(ellipse 60% 75% at 10% 70%, rgba(225, 120, 80, 0.55) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 55% at 90% 85%, rgba(245, 165, 110, 0.40) 0%, transparent 50%),
+        #f0e6df;
+    }
+
+    .hero-fade {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, #faf8f5);
+    }
+
+.content {
+      padding: 0 28px 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f2e4dc;
+      color: #9e4a30;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #1a1210;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #9c8e85;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9c8e85;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 11px;
+    }
+
+    .inputs-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      flex: 1;
+    }
+
+    .input-field-label {
+      font-size: 11px;
+      color: #b8ada5;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .time-input {
+      width: 100%;
+      border: 1.5px solid #e4dbd4;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1210;
+      background: #fff;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      -moz-appearance: textfield;
+    }
+
+    .time-input::-webkit-outer-spin-button,
+    .time-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .time-input:focus {
+      border-color: #c05a3e;
+      box-shadow: 0 0 0 3px rgba(192, 90, 62, 0.1);
+    }
+
+    .speeds-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 32px;
+    }
+
+    .speed-btn {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+
+    .speed-btn:active {
+      transform: scale(0.95);
+    }
+
+    .speed-btn.active {
+      background: #c05a3e;
+      color: #fff;
+    }
+
+    .speed-btn.inactive {
+      background: #ede7e2;
+      color: #9c8e85;
+    }
+
+    .speed-btn.inactive:hover {
+      background: #e4dbd4;
+    }
+
+    .divider {
+      height: 1px;
+      background: #ece5df;
+      margin-bottom: 28px;
+    }
+
+    .result-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9c8e85;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 4px;
+    }
+
+    .result-time {
+      font-size: 56px;
+      font-weight: 800;
+      color: #1a1210;
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+
+    .result-speed {
+      font-size: 13px;
+      color: #b8ada5;
+      margin-top: 8px;
+    }
+
+    .result-saved {
+      font-size: 14px;
+      font-weight: 600;
+      color: #b84f32;
+      margin-top: 8px;
+    }
+
+    .progress-wrap {
+      margin-top: 20px;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: #ede7e2;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #d4623f, #e8896a);
+      transition: width 0.3s ease;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .progress-meta span {
+      font-size: 12px;
+      color: #b8ada5;
+    }
+
+    .progress-meta strong {
+      font-size: 12px;
+      color: #1a1210;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const SPEEDS = [1, 1.2, 1.5, 1.8, 2, 2.5];
+
+    function formatTime(totalMinutes) {
+      const rounded = Math.round(totalMinutes);
+      const h = Math.floor(rounded / 60);
+      const m = rounded % 60;
+      if (rounded === 0) return '0m';
+      if (h === 0) return `${m}m`;
+      if (m === 0) return `${h}h`;
+      return `${h}h ${m}m`;
+    }
+
+    function App() {
+      const [hours, setHours] = useState(10);
+      const [minutes, setMinutes] = useState(0);
+      const [speed, setSpeed] = useState(1.5);
+
+      const totalMinutes = (parseInt(hours, 10) || 0) * 60 + (parseInt(minutes, 10) || 0);
+      const actualMinutes = totalMinutes / speed;
+      const savedMinutes = totalMinutes - actualMinutes;
+      const pctSaved = totalMinutes > 0 ? (savedMinutes / totalMinutes) * 100 : 0;
+
+      return (
+        <div className="card">
+
+          <div className="hero">
+            <div className="hero-fade" />
+          </div>
+
+          <div className="content">
+            <span className="badge">Audiobook</span>
+            <h1>Timer</h1>
+            <p className="subtitle">
+              Enter your book's length and playback speed to find your real listening time.
+            </p>
+
+            <p className="section-label">Book Length</p>
+            <div className="inputs-row">
+              <div className="input-group">
+                <label className="input-field-label">Hours</label>
+                <input
+                  className="time-input"
+                  type="number"
+                  min="0"
+                  value={hours}
+                  onChange={e => setHours(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                />
+              </div>
+              <div className="input-group">
+                <label className="input-field-label">Minutes</label>
+                <input
+                  className="time-input"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={minutes}
+                  onChange={e => setMinutes(Math.min(59, Math.max(0, parseInt(e.target.value, 10) || 0)))}
+                />
+              </div>
+            </div>
+
+            <p className="section-label">Playback Speed</p>
+            <div className="speeds-row">
+              {SPEEDS.map(s => (
+                <button
+                  key={s}
+                  className={`speed-btn ${speed === s ? 'active' : 'inactive'}`}
+                  onClick={() => setSpeed(s)}
+                >
+                  {s}x
+                </button>
+              ))}
+            </div>
+
+            <div className="divider" />
+
+            <p className="result-label">Actual Time</p>
+            <p className="result-time">{formatTime(actualMinutes)}</p>
+            <p className="result-speed">at {speed}x speed</p>
+            {speed > 1 && savedMinutes > 0 && (
+              <p className="result-saved">Saved: {formatTime(savedMinutes)}</p>
+            )}
+
+            {totalMinutes > 0 && speed > 1 && (
+              <div className="progress-wrap">
+                <div className="progress-track">
+                  <div className="progress-bar" style={{ width: `${pctSaved}%` }} />
+                </div>
+                <div className="progress-meta">
+                  <span>{Math.round(pctSaved)}% time saved</span>
+                  <strong>{formatTime(actualMinutes)} listening</strong>
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
